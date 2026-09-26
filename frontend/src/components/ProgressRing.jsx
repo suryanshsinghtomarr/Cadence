@@ -36,7 +36,7 @@ function ProgressRing({ value, size = 110 }) {
           filter="url(#ringGlow)"
         />
       </svg>
-      <span className="absolute text-xl font-extrabold text-white">{Math.round(safeValue)}%</span>
+      <span className="absolute mono text-xl font-semibold text-zinc-900">{Math.round(safeValue)}%</span>
     </div>
   )
 }

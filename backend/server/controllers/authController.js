@@ -12,23 +12,30 @@ const createToken = (user) =>
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body
+    console.log('Registration request received:', { name, email })
 
     if (!name || !email || !password) {
+      console.error('Registration validation failed: missing required field')
       return res.status(400).json({ message: 'All fields are required' })
     }
 
     const existingUser = await User.findOne({ email })
     if (existingUser) {
+      console.error('Registration rejected: email already registered', email)
       return res.status(409).json({ message: 'Email already registered' })
     }
 
+    console.log('Hashing password for registration:', email)
     const passwordHash = await bcrypt.hash(password, 10)
+    console.log('Password hashing completed:', email)
 
+    console.log('Saving new user to MongoDB:', email)
     const user = await User.create({
       name,
       email,
       passwordHash,
     })
+    console.log('User saved successfully:', email)
 
     const token = createToken(user)
 
@@ -42,7 +49,17 @@ export const register = async (req, res) => {
       },
     })
   } catch (error) {
-    return res.status(500).json({ message: 'Server error during registration' })
+    console.error('Registration failed:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+    })
+    return res.status(500).json({
+      message:
+        process.env.NODE_ENV === 'production'
+          ? 'Server error during registration'
+          : error.message || 'Server error during registration',
+    })
   }
 }
 

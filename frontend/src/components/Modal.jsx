@@ -7,7 +7,7 @@ function Modal({ open, title, onClose, children }) {
         <>
           <motion.button
             type="button"
-            className="fixed inset-0 z-40 bg-slate-950/60"
+            className="fixed inset-0 z-40 bg-zinc-950/20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -19,13 +19,13 @@ function Modal({ open, title, onClose, children }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border border-white/10 bg-[#0f172a]/95 p-5 backdrop-blur-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl"
+            className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border border-indigo-100/80 bg-white p-5 shadow-sm md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-extrabold text-white">{title}</h3>
+              <h3 className="text-xl font-semibold tracking-tight text-zinc-950">{title}</h3>
               <button
                 type="button"
-                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200"
+                className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600"
                 onClick={onClose}
               >
                 Close

@@ -1,11 +1,39 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import api from '../api/axios.js'
 import { subjectPalette } from '../data/mockData.js'
 import { useAuth } from './AuthContext.jsx'
 
 const PlannerContext = createContext(null)
-const API_BASE_URL = 'https://student-dashboard-backend-scvs.onrender.com/api'
 
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+const normalizeDay = (day) => {
+  if (typeof day === 'number' || /^\d$/.test(String(day))) {
+    return weekDays[Number(day)] || String(day)
+  }
+
+  const value = String(day || '').trim().toLowerCase()
+  const dayAliases = {
+    sunday: 'Sun',
+    sun: 'Sun',
+    monday: 'Mon',
+    mon: 'Mon',
+    tuesday: 'Tue',
+    tue: 'Tue',
+    tues: 'Tue',
+    wednesday: 'Wed',
+    wed: 'Wed',
+    thursday: 'Thu',
+    thu: 'Thu',
+    thurs: 'Thu',
+    friday: 'Fri',
+    fri: 'Fri',
+    saturday: 'Sat',
+    sat: 'Sat',
+  }
+
+  return dayAliases[value] || day
+}
 
 const toMinutes = (time) => {
   const [hours, minutes] = time.split(':').map(Number)
@@ -26,6 +54,7 @@ const toLoggedHours = (goal) => {
 const normalizeSlot = (slot) => ({
   ...slot,
   id: slot._id || slot.id,
+  day: normalizeDay(slot.day),
   location: slot.location || '',
 })
 
@@ -58,22 +87,24 @@ export function PlannerProvider({ children }) {
   const [tasks, setTasks] = useState([])
 
   const request = async (path, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...options.headers,
-      },
-    })
+    const method = (options.method || 'GET').toUpperCase()
+    const payload = options.body ? JSON.parse(options.body) : undefined
+    console.info(`[Cadence] ${method} ${path}`, payload || '')
 
-    const data = await response.json().catch(() => null)
-
-    if (!response.ok) {
-      throw new Error(data?.message || 'Request failed')
+    try {
+      const { data } = await api.request({
+        method,
+        url: path,
+        data: payload,
+        headers: options.headers,
+      })
+      console.info(`[Cadence] ${method} ${path} succeeded`)
+      return data
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Request failed'
+      console.error(`[Cadence] ${method} ${path} failed:`, message)
+      throw new Error(message, { cause: error })
     }
-
-    return data
   }
 
   useEffect(() => {
@@ -102,6 +133,7 @@ export function PlannerProvider({ children }) {
         setGoals((goalsData || []).map(normalizeGoal))
         setTasks((tasksData || []).map((task) => normalizeTask(task)))
       } catch (error) {
+        console.error('[Cadence] Failed to load planner data:', error.message)
         if (isMounted) {
           setTimetableSlots([])
           setGoals([])
@@ -196,6 +228,8 @@ export function PlannerProvider({ children }) {
       title: task.title,
       subject: task.subject,
       dueDate: task.dueDate,
+      priority: task.priority || 'medium',
+      status: task.status || 'todo',
     }
 
     const created = await request('/tasks', {

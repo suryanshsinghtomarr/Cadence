@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 
-export const useTypewriter = (text, speed = 40) => {
-  const [display, setDisplay] = useState('')
+export const useTypewriter = (text, speed = 40, enabled = true) => {
+  const [display, setDisplay] = useState(enabled ? '' : text)
 
   useEffect(() => {
+    if (!enabled) {
+      return undefined
+    }
+
     let index = 0
     setDisplay('')
 
@@ -17,7 +21,7 @@ export const useTypewriter = (text, speed = 40) => {
     }, speed)
 
     return () => clearInterval(timer)
-  }, [text, speed])
+  }, [text, speed, enabled])
 
-  return display
+  return enabled ? display : text
 }

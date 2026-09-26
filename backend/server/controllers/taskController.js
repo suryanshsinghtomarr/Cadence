@@ -47,6 +47,7 @@ export const getTasks = async (req, res) => {
 export const createTask = async (req, res) => {
   try {
     const { title, subject, dueDate, priority, status } = req.body
+    console.log('[Tasks] Create request:', { userId: req.userId, title, subject, dueDate })
 
     if (!title || !subject || !dueDate) {
       return res
@@ -55,7 +56,7 @@ export const createTask = async (req, res) => {
     }
 
     const task = await Task.create({
-      userId: req.user.id,
+      userId: req.userId,
       title,
       subject,
       dueDate,
@@ -63,8 +64,10 @@ export const createTask = async (req, res) => {
       status,
     })
 
+    console.log('[Tasks] Created:', { id: task._id, userId: task.userId })
     return res.status(201).json(task)
   } catch (error) {
+    console.error('Creation error: task', error)
     return res.status(500).json({ message: 'Failed to create task' })
   }
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
 @import "tailwindcss";
 
 * {
@@ -7,59 +7,35 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #0a0f1e;
-  color: #ffffff;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #f4f3ff;
+  color: #18181b;
 }
 
 #root {
   min-height: 100vh;
 }
 
-.aurora-layer {
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 25% 30%, rgba(124, 58, 237, 0.35), transparent 30%),
-    radial-gradient(circle at 75% 25%, rgba(99, 102, 241, 0.28), transparent 35%),
-    radial-gradient(circle at 50% 70%, rgba(34, 211, 238, 0.2), transparent 30%);
-  filter: blur(28px);
-  animation: auroraShift 14s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes auroraShift {
-  0% {
-    transform: translate3d(-3%, -2%, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(4%, 3%, 0) scale(1.05);
-  }
+.mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .glass-input {
-  @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-slate-100 outline-none placeholder:text-transparent transition focus:border-violet-400 focus:shadow-[0_0_0_2px_rgba(124,58,237,0.25)]
+  @apply w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-zinc-900 outline-none placeholder:text-transparent transition focus:border-indigo-500 focus:shadow-[0_0_0_2px_rgba(99,102,241,0.2)]
 }
 
 .floating-label {
-  @apply pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-200;
+  @apply pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 transition-all duration-200;
 }
 
 .floating-group input:focus + .floating-label,
 .floating-group input:not(:placeholder-shown) + .floating-label {
   top: 0;
   transform: translateY(-50%);
-  background: #0f172a;
+  background: #ffffff;
   padding-inline: 0.3rem;
   font-size: 0.72rem;
-  color: #c4b5fd;
-}
-
-.text-gradient {
-  background: linear-gradient(90deg, #ffffff, #c4b5fd 45%, #67e8f9);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #4f46e5;
 }
 
 .ripple-btn {
@@ -78,4 +54,8 @@ body {
 
 .ripple-btn:hover::after {
   transform: rotate(35deg) translateX(180%);
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
 }

@@ -5,13 +5,16 @@ import {
   ChevronsRight,
   LayoutDashboard,
   LogOut,
+  Pause,
+  Play,
+  RotateCcw,
   Target,
   X,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import GlassCard from './GlassCard.jsx'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -19,6 +22,127 @@ const navItems = [
   { to: '/goals', label: 'Goals', icon: Target },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare },
 ]
+
+const TIMER_SECONDS = 25 * 60
+
+function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+function FocusTimer({ collapsed }) {
+  const [mode, setMode] = useState('timer')
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  const [isRunning, setIsRunning] = useState(false)
+  const startedAt = useRef(null)
+
+  useEffect(() => {
+    if (!isRunning) {
+      return undefined
+    }
+
+    const updateElapsed = () => {
+      const nextElapsed = Math.floor((Date.now() - startedAt.current) / 1000)
+
+      if (mode === 'timer' && nextElapsed >= TIMER_SECONDS) {
+        setElapsedSeconds(TIMER_SECONDS)
+        setIsRunning(false)
+        return
+      }
+
+      setElapsedSeconds(nextElapsed)
+    }
+
+    updateElapsed()
+    const interval = window.setInterval(updateElapsed, 250)
+
+    return () => window.clearInterval(interval)
+  }, [isRunning, mode])
+
+  const toggleRunning = () => {
+    if (isRunning) {
+      setElapsedSeconds(Math.floor((Date.now() - startedAt.current) / 1000))
+      setIsRunning(false)
+      return
+    }
+
+    startedAt.current = Date.now() - elapsedSeconds * 1000
+    setIsRunning(true)
+  }
+
+  const reset = () => {
+    setIsRunning(false)
+    setElapsedSeconds(0)
+    startedAt.current = null
+  }
+
+  const changeMode = (nextMode) => {
+    if (nextMode === mode) {
+      return
+    }
+
+    setMode(nextMode)
+    reset()
+  }
+
+  const displaySeconds = mode === 'timer'
+    ? Math.max(0, TIMER_SECONDS - elapsedSeconds)
+    : elapsedSeconds
+
+  return (
+    <section className={`rounded-xl border border-zinc-200/60 bg-indigo-50/50 p-3 ${collapsed ? 'flex flex-col items-center' : ''}`} aria-label="Focus timer">
+      {!collapsed ? (
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs font-semibold text-zinc-800">Focus timer</span>
+          <div className="flex rounded-md border border-zinc-200/60 bg-white/70 p-0.5 text-[10px] font-medium text-zinc-500">
+            <button
+              type="button"
+              onClick={() => changeMode('timer')}
+              className={`rounded px-2 py-1 ${mode === 'timer' ? 'bg-zinc-950 text-white' : 'hover:text-zinc-800'}`}
+              aria-pressed={mode === 'timer'}
+            >
+              Timer
+            </button>
+            <button
+              type="button"
+              onClick={() => changeMode('stopwatch')}
+              className={`rounded px-2 py-1 ${mode === 'stopwatch' ? 'bg-zinc-950 text-white' : 'hover:text-zinc-800'}`}
+              aria-pressed={mode === 'stopwatch'}
+            >
+              Stopwatch
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      <p className="font-mono text-xl font-bold text-zinc-950" aria-live="polite">
+        {formatTime(displaySeconds)}
+      </p>
+
+      <div className="mt-2 flex items-center justify-center gap-2">
+        <button
+          type="button"
+          onClick={toggleRunning}
+          className="rounded-lg bg-zinc-950 p-1.5 text-white"
+          aria-label={isRunning ? 'Pause focus timer' : 'Start focus timer'}
+          title={isRunning ? 'Pause' : 'Start'}
+        >
+          {isRunning ? <Pause size={14} /> : <Play size={14} />}
+        </button>
+        <button
+          type="button"
+          onClick={reset}
+          className="p-1.5 text-zinc-500 hover:text-zinc-800"
+          aria-label="Reset focus timer"
+          title="Reset"
+        >
+          <RotateCcw size={15} />
+        </button>
+      </div>
+    </section>
+  )
+}
 
 function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate()
@@ -40,7 +164,7 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       {mobileOpen ? (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-[#020617]/70 md:hidden"
+          className="fixed inset-0 z-30 bg-zinc-950/20 md:hidden"
           onClick={() => setMobileOpen(false)}
           aria-label="Close menu backdrop"
         />
@@ -51,37 +175,36 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <GlassCard
-          className={`relative flex h-full flex-col overflow-hidden bg-[#0f172a]/80 p-4 transition-all duration-300 ${
+        <div
+          className={`relative flex h-full flex-col border-r border-zinc-200/80 bg-white p-4 transition-all duration-300 ${
             collapsed ? 'w-[92px]' : 'w-[270px]'
           }`}
         >
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
             {!collapsed ? (
               <div>
-                <p className="text-sm text-cyan-300">Student Planner</p>
-                <h2 className="text-xl font-extrabold tracking-tight">FocusFlow</h2>
+                <h2 className="text-lg font-bold tracking-tight text-zinc-950">Cadence</h2>
               </div>
             ) : null}
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setCollapsed((prev) => !prev)}
-                className="hidden rounded-lg border border-white/10 bg-white/5 p-2 text-slate-200 transition hover:scale-105 hover:bg-white/10 md:block"
+                className="hidden rounded-md border border-zinc-200 bg-white p-2 text-zinc-500 transition hover:border-indigo-200 hover:text-zinc-900 active:scale-[0.98] md:block"
               >
                 {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
               </button>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg border border-white/10 bg-white/5 p-2 text-slate-200 md:hidden"
+                className="rounded-md border border-zinc-200 bg-white p-2 text-zinc-500 md:hidden"
               >
                 <X size={16} />
               </button>
             </div>
           </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon
               return (
@@ -90,15 +213,15 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`group relative flex items-center gap-3 rounded-xl px-3 py-3 transition ${
+                      className={`group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition ${
                         isActive
-                          ? 'bg-gradient-to-r from-violet-600/80 to-indigo-500/80 text-white shadow-[0_0_20px_rgba(124,58,237,0.45)]'
-                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                          ? 'bg-zinc-950 text-white'
+                          : 'text-zinc-600 hover:bg-indigo-50 hover:text-zinc-900'
                       }`}
                     >
                       <Icon size={18} />
                       {!collapsed ? <span className="font-medium">{item.label}</span> : null}
-                      {isActive ? <span className="absolute left-0 h-7 w-1 rounded-r bg-violet-300" /> : null}
+                      {isActive ? <span className="absolute left-0 h-5 w-0.5 rounded-r bg-indigo-300" /> : null}
                     </motion.div>
                   )}
                 </NavLink>
@@ -106,31 +229,27 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             })}
           </nav>
 
-          <div className="mt-auto rounded-2xl border border-white/10 bg-gradient-to-br from-white/8 via-white/5 to-white/10 p-3 shadow-[0_10px_30px_rgba(8,15,32,0.35)]">
+          <div className="my-5">
+            <FocusTimer collapsed={collapsed} />
+          </div>
+
+          <div className="mt-auto rounded-xl border border-indigo-100/80 bg-indigo-50/40 p-3">
             <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-gradient-to-br from-violet-500 to-cyan-400 text-sm font-bold text-slate-950 shadow-[0_0_18px_rgba(99,102,241,0.45)]">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">
                 {(user?.name || 'S').slice(0, 1).toUpperCase()}
               </div>
               {!collapsed ? (
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{user?.name}</p>
-                  <p className="text-xs text-slate-400">Student workspace</p>
+                  <p className="truncate text-sm font-semibold text-zinc-900">{user?.name}</p>
                 </div>
               ) : null}
             </div>
-
-            {!collapsed ? (
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                Signed in
-              </div>
-            ) : null}
 
             {user ? (
               <button
                 type="button"
                 onClick={handleLogout}
-                className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-violet-400/35 bg-violet-500/10 px-3 py-2 text-sm font-semibold text-violet-100 transition hover:bg-violet-500/20 hover:text-white ${
+                className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 active:scale-[0.98] ${
                   collapsed ? 'px-2' : ''
                 }`}
                 title="Logout"
@@ -142,7 +261,7 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
               <button
                 type="button"
                 onClick={handleLogin}
-                className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-400/35 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/20 ${
+                className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 active:scale-[0.98] ${
                   collapsed ? 'px-2' : ''
                 }`}
                 title="Login"
@@ -152,7 +271,7 @@ function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
               </button>
             )}
           </div>
-        </GlassCard>
+        </div>
       </aside>
     </>
   )

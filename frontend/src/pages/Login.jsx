@@ -30,98 +30,85 @@ function Login() {
   }
 
   return (
-    <section className="min-h-screen bg-[#0d1117] text-white">
+    <section className="min-h-screen bg-[#F4F3FF] text-zinc-950">
       <div className="grid min-h-screen md:grid-cols-5">
-        <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#0A0F1E] via-[#1a1040] to-[#0d1117] p-12 md:col-span-3 md:flex md:flex-col">
-          <div className="absolute -left-16 -top-10 h-56 w-56 rounded-full bg-violet-500/30 blur-3xl" />
-          <div className="absolute right-12 top-16 h-44 w-44 rounded-full bg-indigo-500/30 blur-3xl" />
-          <div className="absolute -bottom-6 left-1/3 h-60 w-60 rounded-full bg-cyan-400/30 blur-3xl" />
-
-          <div className="relative z-10 flex items-center gap-3">
-            <p className="text-[28px] font-extrabold tracking-tight text-white">FocusFlow</p>
+        <aside className="hidden border-r border-zinc-200/80 bg-white p-10 md:col-span-3 md:flex md:flex-col lg:p-14">
+          <div className="flex items-center gap-3">
+            <p className="text-xl font-bold text-zinc-950">Cadence</p>
           </div>
 
-          <div className="relative z-10 mt-auto mb-auto max-w-xl">
-            <h1 className="text-5xl font-extrabold leading-tight text-white">
+          <div className="my-auto max-w-xl">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight text-zinc-950 lg:text-5xl">
               Plan smarter.
               <br />
               Study deeper.
             </h1>
-            <p className="mt-6 text-lg text-slate-400">
-              Achieve more with a stunning productivity workspace
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-zinc-600">
+              A focused workspace for planning study time, breaking down tasks, and keeping momentum visible.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm text-white backdrop-blur-md">
-                ✦ Timetable
-              </span>
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm text-white backdrop-blur-md">
-                ✦ Goal Tracker
-              </span>
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm text-white backdrop-blur-md">
-                ✦ Task Manager
-              </span>
+            <div className="mt-8 space-y-2 font-mono text-xs text-zinc-700">
+              <p><span className="mr-2 text-indigo-600">•</span>Real-time timetable sync</p>
+              <p><span className="mr-2 text-indigo-600">•</span>Persistent task breakdown</p>
             </div>
           </div>
-
-          <div className="relative z-10" />
         </aside>
 
-        <main className="flex items-center justify-center bg-[#0d1117] px-4 py-10 md:col-span-2 md:px-8">
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl md:p-10">
-            <h2 className="text-[28px] font-bold text-white">Welcome Back</h2>
-            <p className="mt-1 text-sm text-slate-400">Sign in to your account</p>
+        <main className="flex items-center justify-center bg-[#F4F3FF] px-4 py-8 md:col-span-2 md:px-8">
+          <div className="w-full max-w-md rounded-2xl border border-indigo-100/80 bg-white p-6 shadow-sm md:p-7">
+            <h2 className="text-xl font-medium text-zinc-950">Welcome Back</h2>
+            <p className="mt-1 text-xs text-zinc-400">Enter your credentials to access your workspace</p>
 
-            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">Email</label>
+                <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-wider text-zinc-400">Email</label>
                 <input
                   type="email"
                   name="email"
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
                   required
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">Password</label>
+                <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-wider text-zinc-400">Password</label>
                 <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 transition-all focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-zinc-200"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
 
-              {error ? <p className="text-sm text-red-400">{error}</p> : null}
+              {error ? <p className="text-xs text-red-400">{error}</p> : null}
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 py-3 font-semibold text-white transition-all duration-200 hover:from-violet-500 hover:to-indigo-500 hover:shadow-lg hover:shadow-violet-500/25"
+                className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:bg-indigo-500 active:scale-[0.98]"
               >
                 Sign In
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-5 text-center text-xs text-zinc-400">
               New here?{' '}
-              <Link to="/register" className="font-semibold text-violet-400 hover:text-violet-300">
+              <Link to="/register" className="font-medium text-indigo-400 underline-offset-4 hover:text-indigo-300 hover:underline">
                 Create account
               </Link>
             </p>

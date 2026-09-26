@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import {
   BrowserRouter,
@@ -6,7 +5,6 @@ import {
   Outlet,
   Route,
   Routes,
-  useLocation,
 } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Topbar from './components/Topbar.jsx'
@@ -30,14 +28,12 @@ function PrivateRoute({ children }) {
 
 function ProtectedShell() {
   const { user } = useAuth()
-  const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0A0F1E] text-white">
-      <div className="aurora-layer" />
-      <div className="relative z-10 flex min-h-screen">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F4F3FF] text-zinc-950">
+      <div className="flex min-h-screen min-w-0">
         <Sidebar
           user={user}
           collapsed={collapsed}
@@ -46,21 +42,13 @@ function ProtectedShell() {
           setMobileOpen={setMobileOpen}
         />
 
-        <div className="flex w-full flex-1 flex-col">
+        <div className="flex min-w-0 w-full flex-1 flex-col">
           <Topbar user={user} onOpenMobileMenu={() => setMobileOpen(true)} />
 
-          <main className="flex-1 p-3 md:p-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -14 }}
-                transition={{ duration: 0.32 }}
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
+          <main className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 md:p-6">
+            <div className="w-full max-w-full min-w-0">
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>

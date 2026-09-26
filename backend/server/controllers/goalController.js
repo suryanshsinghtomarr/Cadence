@@ -24,19 +24,22 @@ export const getGoals = async (req, res) => {
 export const createGoal = async (req, res) => {
   try {
     const { subject, targetHours } = req.body
+    console.log('[Goals] Create request:', { userId: req.userId, subject, targetHours })
 
     if (!subject || !targetHours) {
       return res.status(400).json({ message: 'subject and targetHours are required' })
     }
 
     const goal = await StudyGoal.create({
-      userId: req.user.id,
+      userId: req.userId,
       subject,
       targetHours,
     })
 
+    console.log('[Goals] Created:', { id: goal._id, userId: goal.userId })
     return res.status(201).json(formatGoal(goal))
   } catch (error) {
+    console.error('Creation error: goal', error)
     return res.status(500).json({ message: 'Failed to create study goal' })
   }
 }

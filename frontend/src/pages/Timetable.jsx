@@ -83,22 +83,20 @@ function Timetable() {
   return (
     <section className="space-y-4">
       <GlassCard className="p-5">
-        <h1 className="text-3xl font-extrabold text-white">Weekly Timetable</h1>
-        <p className="mt-2 text-sm text-slate-300">Plan your week with premium clarity and focus.</p>
+        <p className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-indigo-700">planning / week</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">Weekly Timetable</h1>
+        <p className="mt-2 text-sm text-zinc-600">Plan your week with a clear, low-noise schedule.</p>
       </GlassCard>
 
       <div className="grid gap-3 xl:grid-cols-7">
         {weekDays.map((day) => (
           <GlassCard key={day} className="min-h-[250px] p-3">
-            <h3 className="mb-3 text-center text-sm font-bold uppercase tracking-widest text-cyan-200">{day}</h3>
+            <h3 className="mono mb-3 text-center text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{day}</h3>
             <div className="space-y-2">
               {grouped[day].map((slot) => (
                 <div
                   key={slot.id}
-                  className="group rounded-2xl border border-white/10 bg-gradient-to-r p-3 transition hover:scale-[1.03] hover:border-cyan-300/60 hover:shadow-[0_0_24px_rgba(34,211,238,0.35)]"
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, ${slot.color}77, ${slot.color}33)`,
-                  }}
+                  className="group rounded-xl border border-indigo-100/80 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200"
                 >
                   <div className="mb-2 flex items-center justify-between gap-1">
                     <SubjectBadge subject={slot.subject} />
@@ -106,23 +104,23 @@ function Timetable() {
                       <button
                         type="button"
                         onClick={() => openEdit(slot)}
-                        className="rounded-md bg-slate-950/45 p-1 text-slate-100"
+                        className="rounded-full bg-indigo-100 p-1 text-indigo-700"
                       >
                         <Edit3 size={14} />
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(slot.id)}
-                        className="rounded-md bg-red-500/45 p-1 text-white"
+                        className="rounded-full bg-zinc-100 p-1 text-zinc-600"
                       >
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
-                  <p className="text-xs font-semibold text-white">
+                  <p className="mono text-xs font-semibold text-zinc-700">
                     {slot.startTime} - {slot.endTime}
                   </p>
-                  <p className="text-xs text-cyan-100">{slot.location}</p>
+                  <p className="text-xs text-slate-500">{slot.location}</p>
                 </div>
               ))}
             </div>
@@ -133,7 +131,7 @@ function Timetable() {
       <button
         type="button"
         onClick={openCreate}
-        className="fixed bottom-6 right-6 z-20 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_15px_35px_rgba(99,102,241,0.45)] transition hover:scale-110"
+        className="fixed bottom-6 right-6 z-20 grid h-12 w-12 place-items-center rounded-full bg-zinc-950 text-white shadow-sm transition hover:bg-zinc-800 active:scale-[0.98]"
       >
         <Plus size={24} />
       </button>
@@ -145,14 +143,14 @@ function Timetable() {
               placeholder="Subject"
               value={form.subject}
               onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100"
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-zinc-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
               required
             />
             <input
               placeholder="Location"
               value={form.location}
               onChange={(event) => setForm((prev) => ({ ...prev, location: event.target.value }))}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100"
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-zinc-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
               required
             />
           </div>
@@ -165,8 +163,8 @@ function Timetable() {
                 onClick={() => setForm((prev) => ({ ...prev, day }))}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   form.day === day
-                    ? 'bg-violet-500 text-white shadow-[0_0_14px_rgba(124,58,237,.5)]'
-                    : 'border border-white/10 bg-white/5 text-slate-300'
+                    ? 'bg-indigo-500 text-white'
+                    : 'border border-zinc-200 bg-white text-zinc-600'
                 }`}
               >
                 {day}
@@ -179,19 +177,19 @@ function Timetable() {
               type="time"
               value={form.startTime}
               onChange={(event) => setForm((prev) => ({ ...prev, startTime: event.target.value }))}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100"
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-zinc-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
             />
             <input
               type="time"
               value={form.endTime}
               onChange={(event) => setForm((prev) => ({ ...prev, endTime: event.target.value }))}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100"
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-zinc-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/20"
             />
             <input
               type="color"
               value={form.color}
               onChange={(event) => setForm((prev) => ({ ...prev, color: event.target.value }))}
-              className="h-11 w-full rounded-xl border border-white/10 bg-white/5 p-1"
+              className="h-11 w-full rounded-lg border border-zinc-200 bg-white p-1"
             />
           </div>
 

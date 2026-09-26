@@ -13,13 +13,14 @@ export const getSlots = async (req, res) => {
 export const addSlot = async (req, res) => {
   try {
     const { subject, day, startTime, endTime, color, location } = req.body
+    console.log('[Timetable] Create request:', { userId: req.userId, subject, day, startTime, endTime })
 
     if (!subject || !day || !startTime || !endTime) {
       return res.status(400).json({ message: 'subject, day, startTime and endTime are required' })
     }
 
     const validation = await validateSlot({
-      userId: req.user.id,
+      userId: req.userId,
       day,
       startTime,
       endTime,
@@ -30,7 +31,7 @@ export const addSlot = async (req, res) => {
     }
 
     const slot = await TimetableSlot.create({
-      userId: req.user.id,
+      userId: req.userId,
       subject,
       day,
       startTime,
@@ -39,8 +40,10 @@ export const addSlot = async (req, res) => {
       color,
     })
 
+    console.log('[Timetable] Created:', { id: slot._id, userId: slot.userId })
     return res.status(201).json(slot)
   } catch (error) {
+    console.error('Creation error: timetable slot', error)
     return res.status(500).json({ message: 'Failed to create timetable slot' })
   }
 }
